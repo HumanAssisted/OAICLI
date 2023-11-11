@@ -1,0 +1,37 @@
+[project]
+name = "oaicli"
+version = "0.1.0"
+description = "A Command Line Interface to Open AI"
+authors = [{name = "Jonathan Hendler", email = "jonathan@hai.io"}]
+license = {file="LICENSE"}
+readme = "README.md"
+# repository = "https://github.com/HumanAssistedIntelligence/OAICLI"
+keywords = ["cli", "openai", "api"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache 2.0",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "click>=8.1.7",
+    "openai>=1.2.3",
+    "python-dotenv>=1.0.0",
+    "appdirs>=1.4.4"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.11.0",
+    "flake8>=6.1.0",
+]
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project.scripts]
+oaicli = "oaicli.cli:main"
+
