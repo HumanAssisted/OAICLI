@@ -1,39 +1,58 @@
 # OAICLI 🕶️
-A Command Line Interface to Open AI (pronounced Oakley (IPA oʊk.li), like the sunglasses)
+**A Command Line Interface to Open AI**
+_(pronounced Oakley (IPA oʊk.li), like the sunglasses)_
+---
 
-Designed to take advantage of features launched on OpenAI Dev Day, November 2023.
-OAICLI is designed to help developers easily create and use agents.
+OAICLI is designed to help developers easily test, create, and use assistants, launched on OpenAI Dev Day, November 2023.
 
-If you want an interface, you can use the friendly [https://platform.openai.com/playground](https://platform.openai.com/playground).
+Threads, messages, and message runs are abstracted, so the user experience is seamless. If runs reach a time limit.
+
+I built this for myself. If you want a complete implementation of what Assistants are capable of, you can use the friendly [https://platform.openai.com/playground](https://platform.openai.com/playground).
 
 
 ## installation
 
 `pip install oaicli`
 
-
-
-It will look for a `.env` file with
+Next, creat an `.env` file with
 
     OPENAI_API_KEY  = "[your key]"
     OPEN_AI_MODEL_TYPE = "gpt-4-1106-preview"
+    OPEN_AI_VISION_MODEL_TYPE = "gpt-4-1106-vision-preview"
 
 
-On first run, `oaicli` installs a directory in the project location you installed into
+On first run, `oaicli` installs a directory in the project location
 
-    /oaicli
-           /agents (agent names-> ids, prompts)
-           /threads (threads names->ids, messages)
-           /files (pdf and text files)
+    /oaicli/agent/agents.yaml (agent names-> ids)
+    /oaicli/agent/[agent id]/instructions.yaml
+    /oaicli/threads/threads.yaml (thread names-> ids)
+    /oaicli/threads/[thread id]/[message id].txt
+    /oaicli/files/[file id]/[filename]
 
+The above directory structure should let you check in your work to
+your code repository and track changes.
+
+Agents and threads are given names to make it easier
+Files can be added to conversation.
 
 ## Commands
 
 oaicli -h | --help for help
 
-v0.1
-
 Threads are stored in append only textfiles.
+
+ - oicli start - allows you to start up, choose a thread by name
+
+
+## Roadmap
+
+### v0.2
+
+ - oaicli thread.list [agent] lists current threads
+ - oaicli thread.join [agent] [thread choice from thread.list]
+ - oaicli thread.new [agent] [thread title] - stored locally matched to thread id
+
+Maintanence functions
 
  - oaicli agent.list - list agents
  - oaicli agent.create [agent name] - create a new agent
@@ -43,17 +62,20 @@ Threads are stored in append only textfiles.
  - oaicli agent.directory-upload [agent] [path] - takes all text files and pdf files and uploads content
  - oaicli agent.url-upload [agent] [URL]
  - oaicli agent.file-list [agent] - list an agents files
- - oaicli thread.list [agent] [list current threads]
- - oaicli thread.join [agent] [thread choice from thread.list]
- - oaicli thread.new [agent] [thread title] - stored locally matched to thread id
-   
- v0.2  
- SQL lite for RAG and storage
+
+### v0.3
 
  - agent.dialog [agent name one] [agent name two] ... - have  agents talk to eachother ala autoGPT
  - agent.local-rag [agent] - add a file to local rag for use with an agent
  - agent.function [agent] - add a file to local rag for use with an agent
- 
+ - pydantic, mypy for typing
+ - tox and testing
+
+### v0.4
+
+  - [shell completion](https://click.palletsprojects.com/en/8.1.x/shell-completion/) for commands and directories and files (clicko?)
+  -  SQL lite for RAG and storage
+  - tools support https://platform.openai.com/docs/api-reference/assistants/createAssistant#assistants-createassistant-tools
 
 
 ## Development
