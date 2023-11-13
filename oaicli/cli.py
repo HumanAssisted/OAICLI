@@ -1,17 +1,21 @@
 import click
 from .oai import (
-    ALL_TOOLS_AVAILABLE,
+    # ALL_TOOLS_AVAILABLE,
     create_assistant_wrapper,
     get_assistants,
-    create_assistant_wrapper,
     list_threads,
     create_thread,
+    create_message,
+    create_run,
+    wait_for_or_cancel_run,
+    get_messages,
 )
 from . import ASCII_ART
 
 
 @click.group()
 def cli():
+    click.echo(ASCII_ART)
     """Main entry point for oaicli."""
     pass
 
@@ -28,22 +32,28 @@ cli.add_command(agent)
 @cli.command(name="start")
 def start_up():
     """Get Started"""
-    click.echo(ASCII_ART)
     assistants = []
-
+    current_assistant = None
+    current_assistant_id = None
     threads = []
     current_thread = None
     current_thread_id = None
-    jobs = []
-    current_job = None
+    current_run = None
+    current_run_id = None
 
     click.echo("Listing assistants...")
+    assistant_count = 0
     for assistant in get_assistants():
-        click.echo(f" - {assistant.id} ({assistant.name})")
         assistants.append(assistant)
+        click.echo(f"{assistant_count}. - {assistant.id} ({assistant.name})")
+        assistant_count += 1
 
     if len(assistants) == 0:
         click.echo("No assistants not found.")
+    else:
+        assistant_choice = int(click.prompt("Select Assistant"))
+        current_assistant = assistants[assistant_choice]
+        current_assistant_id = current_assistant.id
 
     if click.confirm("Create new assistant?"):
         name = click.prompt("Name")
@@ -56,48 +66,78 @@ def start_up():
         new_assistant = create_assistant_wrapper(name=name, instructions=instructions)
         click.echo(f"created {new_assistant.id} ({new_assistant.name})")
         assistants.append(new_assistant)
+        current_assistant = new_assistant
+        current_assistant_id = new_assistant.id
 
     # get threads
     # click.echo("Listing threads...")
 
-    for thread in list_threads():
-        threads.append(thread)
+    threads = list_threads()
 
-    if len(threads) == 0:
+    if threads and len(threads) == 0:
         click.echo("No current threads.")
 
     if click.confirm("Create new thread?"):
         thread_name = click.prompt("Thread name?")
         new_thread = create_thread(thread_name=thread_name)
-        threads.add(new_thread)
+        threads.append(new_thread)
 
     # choose thread to send message to
-    for index, thread in threads:
-        click.echo(f"{index}. ")
+    for index, thread in enumerate(threads):
+        click.echo(f"{index}. {thread[0]}")
 
-    thread_choice = click.prompt("Choose a thread.")
+    thread_choice = int(click.prompt("Choose a thread."))
     try:
         current_thread = threads[thread_choice]
-        current_thread_id = current_thread.id
+        current_thread_id = current_thread[1]
+        thread_name = current_thread[0]
     except Exception as e:
         exit(e)
     # create thread (add name to metadata)
 
     # thread loop
+    click.echo("Ready. Type 'exit' when done.")
     while True:
-        user_query = click.prompt("oaicli >")
+        user_query = click.prompt(f"oaicli ({thread_name}) >")
         if user_query == "exit":
             exit("bye")
 
         # add message to thread
-
+        thread_message = create_message(
+            message_content=user_query,
+            thread_name=current_thread[1],
+            thread_id=current_thread_id,
+        )
+        click.echo(f"sent message {thread_message.id}")
         # ask if more messages (recurse)
 
         # run job
+        current_run = create_run(current_thread_id, current_assistant_id)
+        current_run_id = current_run.id
 
         # wait for result
+        result = wait_for_or_cancel_run(current_thread_id, current_run_id)
+        if not result:
+            continue
 
-        # display result
+        # when complete get thread/messages
+        thread_messages = get_messages(current_thread_id)
+        for content in thread_messages[0].content:
+            click.echo(content.text.value)
+
+        # [ThreadMessage(
+        #     id='msg_n53ZT0m8pQZSbLhTPlBeNdJw',
+        #     assistant_id='asst_xz5Kmdsk1Hs8t2ZLUWGRwnF2',
+        #     content=[MessageContentText(text=Text(annotations=[],
+        #         value='Hello! How can I assist you today?'),
+        #         type='text')],
+        #     created_at=1699873243, file_ids=[], metadata={}, object='thread.message', role='assistant',
+        #     run_id='run_wediOA6p2gqQfFxsFnA2XvXZ', thread_id='thread_TkTvmaEJ3Pc0FcWS1Qo16QVD'),
+        # ThreadMessage(id='msg_1s4T6hIVBQPOmmOo4zGyoIpR', assistant_id=None,
+        #     content=[MessageContentText(text=Text(annotations=[], value='hello'), type='text')],
+        #     created_at=1699873242, file_ids=[], metadata={}, object='thread.message', role='user',
+        #     run_id=None, thread_id='thread_TkTvmaEJ3Pc0FcWS1Qo16QVD')
+        # ]
 
 
 @agent.command(name="list")
@@ -179,19 +219,19 @@ def thread():
 cli.add_command(thread)
 
 
-@thread.command(name="list")
-@click.argument("agent")
-def list_threads(agent):
-    """List current threads for an agent."""
-    click.echo(f"Listing threads for agent {agent}")
+# @thread.command(name="list")
+# @click.argument("agent")
+# def list_threads(agent):
+#     """List current threads for an agent."""
+#     click.echo(f"Listing threads for agent {agent}")
 
 
-@thread.command(name="join")
-@click.argument("agent")
-@click.argument("thread_choice")
-def join_thread(agent, thread_choice):
-    """Join a thread."""
-    click.echo(f"Joining thread {thread_choice} for agent {agent}")
+# @thread.command(name="join")
+# @click.argument("agent")
+# @click.argument("thread_choice")
+# def join_thread(agent, thread_choice):
+#     """Join a thread."""
+#     click.echo(f"Joining thread {thread_choice} for agent {agent}")
 
 
 @thread.command(name="new")

@@ -3,11 +3,14 @@
 _(pronounced Oakley (IPA oʊk.li), like the sunglasses)_
 ---
 
-OAICLI is designed to help developers easily test, create, and use assistants, launched on OpenAI Dev Day, November 2023.
+OAICLI is designed to help developers test, create, and use assistants, which were launched on OpenAI Dev Day, November 2023.
 
-Threads, messages, and message runs are abstracted, so the user experience is seamless. If runs reach a time limit.
+Threads, messages, and message runs are abstracted, so make the user experience more seamless. If runs reach a time limit, they will be canceled.
 
-I built this for myself. If you want a complete implementation of what Assistants are capable of, you can use the friendly [https://platform.openai.com/playground](https://platform.openai.com/playground).
+Use at your own risk.
+I built this for myself, but feel free to open issues and PRs.
+
+If you want a complete implementation of what Assistants are capable of, you can use the friendly [OpenAI playground](https://platform.openai.com/playground).
 
 
 ## installation
