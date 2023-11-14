@@ -1,6 +1,6 @@
 # OAICLI 🕶️
 **A Command Line Interface to Open AI**
-_(pronounced Oakley (IPA oʊk.li), like the sunglasses)_
+_(pronounced Oakley (IPA oʊk.li)_
 ---
 
 OAICLI is designed to help developers create and use assistants, which were launched on OpenAI Dev Day, November 2023.
