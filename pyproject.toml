@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["cli", "openai", "api"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: Apache 2.0",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 

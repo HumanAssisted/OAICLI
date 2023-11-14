@@ -3,14 +3,15 @@
 _(pronounced Oakley (IPA oʊk.li), like the sunglasses)_
 ---
 
-OAICLI is designed to help developers test, create, and use assistants, which were launched on OpenAI Dev Day, November 2023.
+OAICLI is designed to help developers create and use assistants, which were launched on OpenAI Dev Day, November 2023.
 
-Threads, messages, and message runs are abstracted, so make the user experience more seamless. If runs reach a time limit, they will be canceled.
+Threads, messages, and thread runs are abstracted, to make the user experience of creating and chatting with agents simpler.
 
-Use at your own risk.
-I built this for myself, but feel free to open issues and PRs.
+Use at your own risk. I built this for myself, but feel free to open issues and PRs.
+If runs reach a time limit, they will be canceled.
 
 If you want a complete implementation of what Assistants are capable of, you can use the friendly [OpenAI playground](https://platform.openai.com/playground).
+
 
 
 ## installation
@@ -83,7 +84,10 @@ Maintanence functions
 
 ## Development
 
+https://github.com/HumanAssistedIntelligence/OAICLI
+
 
     pyenv install 3.12
     pyenv virtualenv 3.12 oaicli
     export PYTHONPATH="[project path]/oaicli
+    pip install .
