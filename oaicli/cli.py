@@ -10,7 +10,7 @@ from .oai import (
     wait_for_or_cancel_run,
     get_messages,
 )
-from . import ASCII_ART
+from . import ASCII_ART, FilePathType
 
 
 @click.group()
@@ -61,8 +61,9 @@ def start_up():
         if input_type == "m":
             instructions = click.prompt("Instructions")
         else:
-            click.echo("Filepath not supported yet")
-
+            file_path = click.prompt("Please enter a file path", type=FilePathType())
+            click.echo(f"Loading filepath {file_path}")
+        exit()
         new_assistant = create_assistant_wrapper(name=name, instructions=instructions)
         click.echo(f"created {new_assistant.id} ({new_assistant.name})")
         assistants.append(new_assistant)
@@ -210,40 +211,8 @@ def file_list(agent):
     click.echo(f"Listing files for agent {agent}")
 
 
-@click.group()
-def thread():
-    """Subcommand for managing threads."""
-    pass
-
-
-cli.add_command(thread)
-
-
-# @thread.command(name="list")
-# @click.argument("agent")
-# def list_threads(agent):
-#     """List current threads for an agent."""
-#     click.echo(f"Listing threads for agent {agent}")
-
-
-# @thread.command(name="join")
-# @click.argument("agent")
-# @click.argument("thread_choice")
-# def join_thread(agent, thread_choice):
-#     """Join a thread."""
-#     click.echo(f"Joining thread {thread_choice} for agent {agent}")
-
-
-@thread.command(name="new")
-@click.argument("agent")
-@click.argument("thread_title")
-def new_thread(agent, thread_title):
-    """Create a new thread."""
-    click.echo(f"Creating new thread '{thread_title}' for agent {agent}")
-
-
 def main():
-    cli()
+    cli(auto_envvar_prefix="OAICLI")
 
 
 if __name__ == "__main__":

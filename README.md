@@ -24,6 +24,18 @@ Next, creat an `.env` file in your project home:
     OPEN_AI_MODEL_TYPE = "gpt-4-1106-preview"
     OPEN_AI_VISION_MODEL_TYPE = "gpt-4-1106-vision-preview"
 
+If you want autocompletion (useful for editing agents and uploading files)
+
+For Bash:
+
+    eval "$(_OAICLI_COMPLETE=source_bash oaicli)"
+
+For Zsh:
+
+    eval "$(_OAICLI_COMPLETE=source_zsh oaicli)"
+
+
+
 
 When you first run `oaicli`, it will install the `.oaicli` directory in the project location
 
@@ -52,16 +64,15 @@ Threads are stored in append only textfiles.
 
 ### v0.2
 
- - oaicli thread.list [agent] lists current threads
- - oaicli thread.join [agent] [thread choice from thread.list]
- - oaicli thread.new [agent] [thread title] - stored locally matched to thread id
-
-Maintanence functions
-
  - oaicli agent.list - list agents
  - oaicli agent.create [agent name] - create a new agent
  - oaicli agent.edit [agent] [prompt | name | params] - edit something about the agent
  - oaicli agent.delete [agent] - delete an agent (don't be mean)
+
+
+Maintanence functions
+
+
  - oaicli agent.file-upload [agent] [path] - send a file to your agent
  - oaicli agent.directory-upload [agent] [path] - takes all text files and pdf files and uploads content
  - oaicli agent.url-upload [agent] [URL]

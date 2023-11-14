@@ -2,6 +2,7 @@ import os
 import appdirs
 from dotenv import load_dotenv
 from pathlib import Path
+import click
 
 current_working_directory = Path.cwd()
 env_path = os.path.join(current_working_directory, ".env")
@@ -39,6 +40,24 @@ def get_local_agents():
 
 def get_default():
     pass
+
+
+# use with @click.argument('file_path', type=FilePathParamType())
+class FilePathParamType(click.Path):
+    def shell_complete(self, ctx, param, incomplete):
+        return [
+            click.shell_completion.Candidate(e)
+            for e in os.listdir(".")
+            if e.startswith(incomplete)
+        ]
+
+
+# use with prompt click.prompt('Please enter a file path', type=FilePathType())
+class FilePathType(click.Path):
+    def convert(self, value, param, ctx):
+        if not os.path.exists(value):
+            self.fail(f"The file path '{value}' does not exist.", param, ctx)
+        return super().convert(value, param, ctx)
 
 
 ASCII_ART = """

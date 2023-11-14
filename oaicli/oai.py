@@ -92,7 +92,7 @@ def wait_for_or_cancel_run(thread_id, run_id):
     while timeout_is_ok:
         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         if run.status != "completed":
-            click.echo(f"\r Job is {run.status}. {total_time} s passed.")
+            click.echo(f"Job is {run.status}. {total_time} s passed.\n", end="\r")
             time.sleep(CHECK_INCREMENT)
             total_time += CHECK_INCREMENT
             if run.status in ["cancelled", "failed", "expired"]:
