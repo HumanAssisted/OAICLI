@@ -96,13 +96,16 @@ def create_thread(thread_name: str):
 
 def save_local_message(thread_message: str, role: str):
     # TODO save content locally in thread directory
-    thread = client.beta.threads.retrieve(thread_message.id)
+    thread = client.beta.threads.retrieve(thread_message.thread_id)
     thread_directory = _get_thread_directory(thread)
     now = datetime.now()
     timestamp = now.strftime("%Y-%m-%d-%H:%M:%S")
     local_path = f"{thread_directory}/{timestamp}-{role}-{thread_message.id}.txt"
     file_object = open(local_path, "w")
-    file_object.write(thread_message.content.text.value)
+    all_content = ""
+    for _content in thread_message.content:
+        all_content += _content.text.value
+    file_object.write(all_content)
 
 
 def create_message(message_content: str, thread_name: str, thread_id: str):
@@ -136,8 +139,11 @@ def wait_for_or_cancel_run(thread_id, run_id):
     while timeout_is_ok:
         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         if run.status != "completed":
-            click.echo(f"Job is {run.status}. {total_time} s passed.\n", end="\r")
+            click.echo(
+                f"Job is {run.status}. {total_time} s passed.", nl=False
+            )
             time.sleep(CHECK_INCREMENT)
+            click.echo("\r", nl=False)
             total_time += CHECK_INCREMENT
             if run.status in ["cancelled", "failed", "expired"]:
                 return
