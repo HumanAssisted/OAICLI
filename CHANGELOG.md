@@ -6,4 +6,8 @@
 # 0.2.0
 
 - some input validation for files
--
+- file list
+- file upload
+- file download (doesn't account for binary)
+- edit agents
+- save messages

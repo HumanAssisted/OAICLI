@@ -165,10 +165,10 @@ def agent():
 cli.add_command(agent)
 
 
-# @agent.command(name="list")
-# def list_agents():
-#     """List agents."""
-#     click.echo("Listing agents...")
+@agent.command(name="list")
+def list_agents():
+    """List agents."""
+    list_agents()
 
 
 @agent.command(name="create")
@@ -184,42 +184,42 @@ def create_agent():
 #     click.echo(f"Deleting agent: {agent}")
 
 
-@agent.command(name="file-upload")
-@click.argument("agent")
-@click.argument("path")
-def file_upload(agent, path):
-    """Send a file to your agent."""
-    # creates a file
+# @agent.command(name="file-upload")
+# @click.argument("agent")
+# @click.argument("path")
+# def file_upload(agent, path):
+#     """Send a file to your agent."""
+#     # creates a file
 
-    # get agent
+#     # get agent
 
-    # update agent
+#     # update agent
 
-    # adds file to agent
-    click.echo(f"Uploading file from {path} to agent {agent}")
-
-
-@agent.command(name="directory-upload")
-@click.argument("agent")
-@click.argument("path")
-def directory_upload(agent, path):
-    """Uploads all text and PDF files from a directory."""
-    click.echo(f"Uploading files from directory {path} to agent {agent}")
+#     # adds file to agent
+#     click.echo(f"Uploading file from {path} to agent {agent}")
 
 
-@agent.command(name="url-upload")
-@click.argument("agent")
-@click.argument("url")
-def url_upload(agent, url):
-    """Upload content from a URL to an agent."""
-    click.echo(f"Uploading content from {url} to agent {agent}")
+# @agent.command(name="directory-upload")
+# @click.argument("agent")
+# @click.argument("path")
+# def directory_upload(agent, path):
+#     """Uploads all text and PDF files from a directory."""
+#     click.echo(f"Uploading files from directory {path} to agent {agent}")
 
 
-@agent.command(name="file-list")
-@click.argument("agent")
-def file_list(agent):
-    """List an agent's files."""
-    click.echo(f"Listing files for agent {agent}")
+# @agent.command(name="url-upload")
+# @click.argument("agent")
+# @click.argument("url")
+# def url_upload(agent, url):
+#     """Upload content from a URL to an agent."""
+#     click.echo(f"Uploading content from {url} to agent {agent}")
+
+
+# @agent.command(name="file-list")
+# @click.argument("agent")
+# def file_list(agent):
+#     """List an agent's files."""
+#     click.echo(f"Listing files for agent {agent}")
 
 
 def main():
