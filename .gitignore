@@ -11,6 +11,7 @@ __pycache__/
 .oaicli/files
 .oaicli/threads
 .oaicli/agents
+mynotes.md
 
 # Distribution / packaging
 .Python
