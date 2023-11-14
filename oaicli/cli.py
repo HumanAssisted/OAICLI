@@ -6,11 +6,11 @@ from .oai import (
     list_all_files,
     upload_file,
     delete_file,
+    delete_assistant,
 )
 from .oai_wrappers import (
     create_agent_interactive,
     list_assistants,
-    delete_assistant,
     select_assistant,
     select_thread,
     update_agent,
@@ -19,8 +19,6 @@ from .oai_wrappers import (
     select_file_id,
 )
 from . import ASCII_ART, FilePathParamType
-
-click.echo(ASCII_ART)
 
 
 @click.group()
@@ -32,6 +30,7 @@ def cli():
 @cli.command(name="start")
 def start_up():
     """Get Started"""
+    click.echo(ASCII_ART)
     assistants = []
     current_assistant = None
     current_assistant_id = None
@@ -163,7 +162,7 @@ def do_update_agent():
 
 @agent.command(name="delete")
 def do_delete_agent():
-    """delete file"""
+    """delete an agent"""
     assistant = select_assistant()
     if click.confirm(
         f"Are you sure you want to delete assistant {assistant.name} ({assistant.id})?"

@@ -69,7 +69,7 @@ For Zsh:
  - oaicli agent.delete [agent] - delete an agent (don't be mean)
  - upload doc from url, or get web contents
  - cat a directory into a single file and upload
-
+ - create OAICLI help agent, uploading entire github repo. For example "what changes would you make to README.md based on the source code"
 
  ### v1.x
 

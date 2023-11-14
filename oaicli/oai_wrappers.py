@@ -17,15 +17,13 @@ from .oai import (
     client,
 )
 from . import FilePathType
-import os
 
 
 def create_agent_interactive():
     name = click.prompt("Name")
     input_type = click.prompt(
-        "Load file or enter instructions manually?",
+        "Load an instructions file or enter instructions manually?",
         type=click.Choice(["f", "m"]),
-        case_sensitive=False,
         default="m",
     )
     if input_type == "m":
@@ -33,8 +31,8 @@ def create_agent_interactive():
     else:
         file_path = click.prompt("Please enter a file path", type=FilePathType())
         click.echo(f"Loading filepath {file_path}")
-        file = os.open(file_path, "r")
-        instructions = file.read()
+        with open(file_path, "r") as filehandle:
+            instructions = filehandle.read()
     new_assistant = create_assistant_wrapper(name=name, instructions=instructions)
     save_instructions(new_assistant, new_assistant.instructions)
     click.echo(f"created {new_assistant.id} ({new_assistant.name})")
@@ -57,7 +55,7 @@ def update_agent():
     assistant = select_assistant()
     current_assistant = assistant
     current_assistant_id = assistant.id
-
+    click.echo(f"current instructions are {current_assistant.instructions}")
     if click.confirm(f"Update prompt?"):
         filepath = f"{_get_assistant_path(current_assistant)}/instructions.txt"
         if click.confirm(f"did you update {filepath}?"):
