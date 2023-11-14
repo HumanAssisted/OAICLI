@@ -134,15 +134,17 @@ def download_all():
     download_all_files()
 
 
-@file.command(name="list-all")
+@file.command(name="list")
 def list_all():
     """List all files"""
     list_all_files()
 
 
-@file.command(name="upload-file")
-@click.option("--file-path", type=FilePathParamType(), help="Path to a file.")
-def upload_file(file_path):
+@file.command(name="upload")
+@click.option(
+    "-f", "--file-path", type=FilePathParamType(), help="Path to a file.", required=True
+)
+def do_upload_file(file_path):
     """Upload file"""
     if click.confirm(f"Are you sure you want to upload {file_path}?"):
         upload_file(file_path)
