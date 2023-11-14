@@ -17,6 +17,21 @@ from .oai import (
     client,
 )
 from . import FilePathType
+import textwrap
+
+
+def wrap_text(text, width=150, dash=False):
+    wrapper = textwrap.TextWrapper(
+        width=width, break_long_words=False, replace_whitespace=False
+    )
+    wrapped_lines = wrapper.wrap(text)
+
+    if dash:
+        wrapped_lines = [
+            line + "-" if i < len(wrapped_lines) - 1 else line
+            for i, line in enumerate(wrapped_lines)
+        ]
+    return "\n".join(wrapped_lines)
 
 
 def create_agent_interactive():
@@ -55,13 +70,16 @@ def update_agent():
     assistant = select_assistant()
     current_assistant = assistant
     current_assistant_id = assistant.id
-    click.echo(f"current instructions are {current_assistant.instructions}")
+    formatted_instructions = current_assistant.instructions  # wrap_text()
+    click.echo(f"current instructions:\n\n\t{formatted_instructions}\n\n")
     if click.confirm(f"Update prompt?"):
-        filepath = f"{_get_assistant_path(current_assistant)}/instructions.txt"
-        if click.confirm(f"did you update {filepath}?"):
+        if click.confirm(f"did you update {current_assistant.id}/instructions.txt?"):
             new_instructions = None
         else:
-            new_instructions = click.prompt("enter new instructions")
+            file_path = click.prompt("Please enter a file path", type=FilePathType())
+            click.echo(f"Loading filepath {file_path}")
+            with open(file_path, "r") as filehandle:
+                new_instructions = filehandle.read()
         update_agent_instructions(
             current_assistant_id, new_instructions=new_instructions
         )
@@ -116,7 +134,7 @@ def update_agent_with_file(assistant_id):
         instructions=my_assistant.instructions,
         name=my_assistant.name,
         tools=my_assistant.tools,
-        model=my_assistant.modal,
+        model=my_assistant.model,
         file_ids=my_assistant.file_ids,
     )
 
@@ -142,8 +160,6 @@ def update_agent_instructions(assistant_id, new_instructions=None):
     # get agent
     my_assistant = client.beta.assistants.retrieve(assistant_id)
 
-    click.echo(f"current instructions:\n {my_assistant.instructions}")
-
     if new_instructions:
         # save them
         save_instructions(my_assistant, new_instructions)
@@ -160,7 +176,7 @@ def update_agent_instructions(assistant_id, new_instructions=None):
             instructions=my_assistant.instructions,
             name=my_assistant.name,
             tools=my_assistant.tools,
-            model=my_assistant.modal,
+            model=my_assistant.model,
             file_ids=my_assistant.file_ids,
         )
 
@@ -195,19 +211,9 @@ def list_assistants():
     assistant_count = 0
     for assistant in get_assistants():
         assistants.append(assistant)
-        click.echo(f"{assistant_count}. - {assistant.id} ({assistant.name})")
+        click.echo(f"{assistant_count}. {assistant.name}({assistant.id})")
         assistant_count += 1
 
     if len(assistants) == 0:
         click.echo("No assistants not found.")
     return assistants
-
-
-def add_file_to_agent():
-    # https://platform.openai.com/docs/api-reference/assistants/createAssistantFile
-    file_path = _get_assistant_path()
-    pass
-
-
-def add_file_to_message():
-    pass

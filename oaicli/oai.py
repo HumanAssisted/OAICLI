@@ -1,4 +1,10 @@
-from . import OPEN_AI_MODEL_TYPE, DEFAULT_IMAGE_MODEL, files_dir, threads_dir
+from . import (
+    OPEN_AI_MODEL_TYPE,
+    DEFAULT_IMAGE_MODEL,
+    agents_dir,
+    files_dir,
+    threads_dir,
+)
 from openai import OpenAI
 import os
 import logging
@@ -23,7 +29,7 @@ client = OpenAI()
 
 
 def _get_assistant_path(my_assistant):
-    return f"{threads_dir}/{my_assistant.name}{thread_separator}{my_assistant.id}"
+    return f"{agents_dir}/{my_assistant.id}"
 
 
 def get_assistants(after=None):
@@ -54,14 +60,16 @@ def create_assistant_wrapper(
 
 
 def save_instructions(my_assistant, content):
+    os.makedirs(_get_assistant_path(my_assistant), exist_ok=True)
     filepath = f"{_get_assistant_path(my_assistant)}/instructions.txt"
     file_object = open(filepath, "w")
     file_object.write(content)
 
 
 def load_instructions(my_assistant):
+    os.makedirs(_get_assistant_path(my_assistant), exist_ok=True)
     filepath = f"{_get_assistant_path(my_assistant)}/instructions.txt"
-    file_object = open(filepath, "w")
+    file_object = open(filepath, "r")
     return file_object.read()
 
 
