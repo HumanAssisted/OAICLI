@@ -7,7 +7,9 @@ current_working_directory = Path.cwd()
 env_path = os.path.join(current_working_directory, ".env")
 load_dotenv(dotenv_path=env_path)
 
-home_dir = appdirs.user_config_dir(f"{current_working_directory}/oaicli")
+OAICLI_HOME = ".oaicli"
+
+home_dir = appdirs.user_config_dir(f"{current_working_directory}/{OAICLI_HOME}")
 agents_dir = os.path.join(home_dir, "agents")
 os.makedirs(agents_dir, exist_ok=True)
 threads_dir = os.path.join(home_dir, "threads")

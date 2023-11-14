@@ -18,14 +18,14 @@ If you want a complete implementation of what Assistants are capable of, you can
 
 `pip install oaicli`
 
-Next, creat an `.env` file with
+Next, creat an `.env` file in your project home:
 
     OPENAI_API_KEY  = "[your key]"
     OPEN_AI_MODEL_TYPE = "gpt-4-1106-preview"
     OPEN_AI_VISION_MODEL_TYPE = "gpt-4-1106-vision-preview"
 
 
-On first run, `oaicli` installs a directory in the project location
+When you first run `oaicli`, it will install the `.oaicli` directory in the project location
 
     /oaicli/agent/agents.yaml (agent names-> ids)
     /oaicli/agent/[agent id]/instructions.yaml
