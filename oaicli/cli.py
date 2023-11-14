@@ -7,17 +7,20 @@ from .oai import (
     create_thread,
     create_message,
     download_all_files,
+    list_all_files,
     create_run,
     wait_for_or_cancel_run,
     get_messages,
+    upload_file,
 )
 from .oai_wrappers import create_agent_interactive, list_agents
-from . import ASCII_ART, FilePathType
+from . import ASCII_ART, FilePathType, FilePathParamType
+
+click.echo(ASCII_ART)
 
 
 @click.group()
 def cli():
-    click.echo(ASCII_ART)
     """Main entry point for oaicli."""
     pass
 
@@ -125,10 +128,30 @@ def file():
 cli.add_command(file)
 
 
-@file.command(name="download_all")
+@file.command(name="download-all")
 def download_all():
     """Download all files"""
     download_all_files()
+
+
+@file.command(name="list-all")
+def list_all():
+    """List all files"""
+    list_all_files()
+
+
+@file.command(name="upload-file")
+@click.option("--file-path", type=FilePathParamType(), help="Path to a file.")
+def upload_file(file_path):
+    """Upload file"""
+    if click.confirm(f"Are you sure you want to upload {file_path}?"):
+        upload_file(file_path)
+
+
+# @file.command(name="list_all")
+# def upload_directory():
+#     """List all files"""
+#     list_all_files()
 
 
 @click.group()
@@ -140,10 +163,10 @@ def agent():
 cli.add_command(agent)
 
 
-@agent.command(name="list")
-def list_agents():
-    """List agents."""
-    click.echo("Listing agents...")
+# @agent.command(name="list")
+# def list_agents():
+#     """List agents."""
+#     click.echo("Listing agents...")
 
 
 @agent.command(name="create")
@@ -152,19 +175,11 @@ def create_agent():
     create_agent_interactive()
 
 
-@agent.command(name="edit")
-@click.argument("agent")
-@click.argument("field", type=click.Choice(["prompt", "name", "params"]))
-def edit_agent(agent, field):
-    """Edit something about the agent."""
-    click.echo(f"Editing {field} of agent {agent}")
-
-
-@agent.command(name="delete")
-@click.argument("agent")
-def delete_agent(agent):
-    """Delete an agent."""
-    click.echo(f"Deleting agent: {agent}")
+# @agent.command(name="delete")
+# @click.argument("agent")
+# def delete_agent(agent):
+#     """Delete an agent."""
+#     click.echo(f"Deleting agent: {agent}")
 
 
 @agent.command(name="file-upload")

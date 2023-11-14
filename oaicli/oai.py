@@ -128,7 +128,7 @@ def wait_for_or_cancel_run(thread_id, run_id):
 
 def _get_local_filepath(file):
     new_filename = f"{file.id}{filename_separator}{file.filename}"
-    return f"{files_dir}{new_filename}"
+    return f"{files_dir}/{new_filename}"
 
 
 def upload_file(local_filepath: str):
@@ -148,6 +148,7 @@ def list_files():
 
 
 def download_all_files():
+    # TODO -  option for file ids in use, not in use
     all_files = list_files()
     for file in all_files:
         local_path = _get_local_filepath(file)
@@ -155,9 +156,20 @@ def download_all_files():
             content = client.files.retrieve_content(file.id)
             file_object = open(local_path, "w")
             file_object.write(content)
-            click.echo(f"wrote {file.name} to {local_path}")
+            click.echo(f"{file.filename} ({file.id}) to {local_path}")
         else:
-            click.echo(f"file {file.name} exists locally")
+            click.echo(f"{file.filename} ({file.id}) exists locally")
+
+
+def list_all_files():
+    # TODO -  option for file ids in use, not in use
+    all_files = list_files()
+    for file in all_files:
+        local_path = _get_local_filepath(file)
+        if not os.path.exists(local_path):
+            click.echo(f"{file.filename} ({file.id}) does not exist locally")
+        else:
+            click.echo(f"{file.filename} ({file.id}) exists locally")
 
 
 # def vision_url(prompt: str, image_url: str):
