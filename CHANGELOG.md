@@ -11,3 +11,5 @@
 - file download (doesn't account for binary)
 - edit agents
 - save messages
+- add files to messages or agents
+- edit agent messages or files

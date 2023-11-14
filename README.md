@@ -73,6 +73,10 @@ For Zsh:
 
  ### v1.x
 
+Have agents select and talk to each other.
+
+Other:
+
  - agent.dialog [agent name one] [agent name two] ... - have  agents talk to eachother ala autoGPT
  - agent.local-rag [agent] - add a file to local rag for use with an agent
  - agent.function [agent] - add a file to local rag for use with an agent

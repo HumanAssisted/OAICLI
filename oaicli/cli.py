@@ -1,21 +1,21 @@
 import click
 from .oai import (
     # ALL_TOOLS_AVAILABLE,
-    create_assistant_wrapper,
-    get_assistants,
-    list_threads,
-    create_thread,
     create_message,
     download_all_files,
     list_all_files,
-    create_run,
-    wait_for_or_cancel_run,
-    get_messages,
     upload_file,
-    save_local_message,
 )
-from .oai_wrappers import create_agent_interactive, list_agents
-from . import ASCII_ART, FilePathType, FilePathParamType
+from .oai_wrappers import (
+    create_agent_interactive,
+    list_assistants,
+    select_assistant,
+    select_thread,
+    update_agent,
+    choose_or_create_file,
+    run_thread,
+)
+from . import ASCII_ART, FilePathParamType
 
 click.echo(ASCII_ART)
 
@@ -32,98 +32,58 @@ def start_up():
     assistants = []
     current_assistant = None
     current_assistant_id = None
-    threads = []
-    current_thread = None
-    current_thread_id = None
-    current_run = None
-    current_run_id = None
 
     if click.confirm("Create new assistant?"):
         new_assistant = create_agent_interactive()
         assistants.append(new_assistant)
         current_assistant = new_assistant
         current_assistant_id = new_assistant.id
-
-    assistants = list_agents()
-    if len(assistants) > 0:
-        assistant_choice = int(click.prompt("Select Assistant"))
-        current_assistant = assistants[assistant_choice]
-        current_assistant_id = current_assistant.id
     else:
-        exit("must create assistant")
+        assistant = select_assistant()
+        current_assistant = assistant
+        current_assistant_id = assistant.id
 
-    threads = list_threads()
-
-    if threads and len(threads) == 0:
-        click.echo("No current threads.")
-
-    if click.confirm("Create new thread?"):
-        thread_name = click.prompt("Thread name?")
-        new_thread = create_thread(thread_name=thread_name)
-        threads.append(new_thread)
-
-    # choose thread to send message to
-    for index, thread in enumerate(threads):
-        click.echo(f"{index}. {thread[0]}")
-
-    thread_choice = int(click.prompt("Choose a thread."))
-    try:
-        current_thread = threads[thread_choice]
-        current_thread_id = current_thread[1]
-        thread_name = current_thread[0]
-    except Exception as e:
-        exit(e)
-    # create thread (add name to metadata)
+    current_thread = select_thread()
+    current_thread_id = current_thread[1]
+    current_thread_name = current_thread[0]
 
     # thread loop
     click.echo("Ready.")
     click.echo(
         """
 Inline commands:
- - Change agent by typing "change"
- - Add file to agent with "agent"
+ - Change agent by typing "change" (changes which agent runs the thread)
+ - Add file to agent (or change prompt) with "agent"
  - Type 'exit' when done."""
     )
     while True:
-        user_query = click.prompt(f"oaicli ({thread_name}) >")
+        user_query = click.prompt(f"oaicli ({current_thread_name}) >")
         if user_query.strip() == "exit":
             exit("bye")
         elif user_query.strip() == "change":
             click.echo("changing agent")
             continue
         elif user_query.strip() == "agent":
-            click.echo("adding file to agent")
-            continue
+            update_agent()
 
-        if click.confirm("Add a file?"):
-            if click.confirm("Create a file?"):
-                pass
-            # list files
-            # choose a file
+        if click.confirm("Add a file to the message?"):
+            file_id = choose_or_create_file()
+            thread_message = create_message(
+                message_content=user_query,
+                thread_name=current_thread[1],
+                thread_id=current_thread_id,
+                file_ids=[file_id],
+            )
+        else:
+            # add message to thread
+            thread_message = create_message(
+                message_content=user_query,
+                thread_name=current_thread[1],
+                thread_id=current_thread_id,
+            )
 
-        # add message to thread
-        thread_message = create_message(
-            message_content=user_query,
-            thread_name=current_thread[1],
-            thread_id=current_thread_id,
-        )
         click.echo(f"sent message {thread_message.id}")
-        # ask if more messages (recurse)
-
-        # run job
-        current_run = create_run(current_thread_id, current_assistant_id)
-        current_run_id = current_run.id
-
-        # wait for result
-        result = wait_for_or_cancel_run(current_thread_id, current_run_id)
-        if not result:
-            continue
-
-        # when complete get thread/messages
-        thread_messages = get_messages(current_thread_id)
-        for content in thread_messages[0].content:
-            save_local_message(thread_message=thread_messages[0], role="assistant")
-            click.echo(content.text.value)
+        run_thread(current_thread_id, current_assistant_id)
 
 
 @click.group()
@@ -175,13 +135,19 @@ cli.add_command(agent)
 @agent.command(name="list")
 def list_agents():
     """List agents."""
-    list_agents()
+    list_assistants()
 
 
 @agent.command(name="create")
 def create_agent():
     """Create a new agent."""
     create_agent_interactive()
+
+
+@agent.command(name="update")
+def do_update_agent():
+    """Update an agents instructions or file list"""
+    update_agent()
 
 
 # @agent.command(name="delete")
