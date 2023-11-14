@@ -50,6 +50,10 @@ Threads are given names to make it easier to choose.
     oaicli file list
     oaicli file download-all
 
+
+
+![Screenshot of running oaicli start](screenshot.png?raw=true "Running oaicli start")
+
 ## experimental
 
 Probably broken. If you want autocompletion (useful for editing agents and uploading files)
