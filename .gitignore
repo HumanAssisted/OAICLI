@@ -8,9 +8,9 @@ __pycache__/
 
 
 .env
-oaicli/files
-oaicli/threads
-oaicli/agents
+.oaicli/files
+.oaicli/threads
+.oaicli/agents
 
 # Distribution / packaging
 .Python

@@ -1,0 +1,15 @@
+# 0.1.0
+
+- basic create agent, thread, messages
+
+
+# 0.2.0
+
+- some input validation for files
+- file list
+- file upload
+- file download (doesn't account for binary)
+- edit agents
+- save messages
+- add files to messages or agents
+- edit agent messages or files

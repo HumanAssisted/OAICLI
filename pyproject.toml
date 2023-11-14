@@ -1,6 +1,6 @@
 [project]
 name = "oaicli"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Command Line Interface to Open AI"
 authors = [{name = "Jonathan Hendler", email = "jonathan@hai.io"}]
 license = {file="LICENSE"}
@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["cli", "openai", "api"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: Apache 2.0",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 
