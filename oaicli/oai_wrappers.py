@@ -128,8 +128,8 @@ def choose_or_create_file():
 def update_agent_with_file(assistant_id):
     # get agent
     my_assistant = client.beta.assistants.retrieve(assistant_id)
-
-    my_assistant.file_ids += choose_or_create_file()
+    chosen_file_id = choose_or_create_file()
+    my_assistant.file_ids.append(chosen_file_id)
     # update agent
     client.beta.assistants.update(
         my_assistant.id,
