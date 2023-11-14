@@ -18,6 +18,7 @@ from .oai import (
 )
 from . import FilePathType
 import textwrap
+from datetime import datetime
 
 
 def wrap_text(text, width=150, dash=False):
@@ -71,7 +72,8 @@ def update_agent():
     current_assistant = assistant
     current_assistant_id = assistant.id
     formatted_instructions = current_assistant.instructions  # wrap_text()
-    click.echo(f"current instructions:\n\n\t{formatted_instructions}\n\n")
+    click.echo(f"current instructions:\n\n\t{formatted_instructions}\n")
+    click.echo(f"current files:\n{current_assistant.file_ids}\n")
     if click.confirm(f"Update prompt?"):
         if click.confirm(f"did you update {current_assistant.id}/instructions.txt?"):
             new_instructions = None
@@ -187,22 +189,23 @@ def update_agent_tools(assistant_id, tools_to_add=None, tools_to_remove=None):
 
 def select_file_id():
     all_files = list_files()
-    if len(all_files) > 0:
-        choices = [
-            (file.filename, file.id)
-            for file in all_files
-            if file.purpose == "assistants"
-        ]
-        indexes = []
-        for index, (filename, fileid) in choices:
-            indexes.append(0)
-            click.echo(f"{index}. {filename}")
+    choices = [
+        (file.filename, file.id, file.created_at)
+        for file in all_files
+        if file.purpose == "assistants"
+    ]
+    indexes = []
+    for index, (filename, fileid, created) in enumerate(choices):
+        indexes.append(str(index))
+        dt = datetime.fromtimestamp(created)
+        created = dt.strftime("%Y-%m-%d-%H:%M:%S")
+        click.echo(f"{index}. {filename} ({created})")
 
-        index_choice = click.prompt("Choose a file index", type=click.Choice(indexes))
+    index_choice = click.prompt("Choose a file index", type=click.Choice(indexes))
 
-        file_choice = choices[index_choice]
-        click.echo(f"You chose file {file_choice[0]} ({file_choice[1]})")
-        return file_choice[1]
+    file_choice = choices[int(index_choice)]
+    click.echo(f"You chose file {file_choice[0]} ({file_choice[1]})")
+    return file_choice[1]
 
 
 def list_assistants():

@@ -187,9 +187,9 @@ def download_all_files():
             content = client.files.retrieve_content(file.id)
             file_object = open(local_path, "w")
             file_object.write(content)
-            click.echo(f"{file.filename} ({file.id}) to {local_path}")
+            click.echo(f"{file.filename}\t\t({file.id}) to {local_path}")
         else:
-            click.echo(f"{file.filename} ({file.id}) exists locally")
+            click.echo(f"{file.filename}\t\t({file.id}) exists locally")
 
 
 def list_all_files():
@@ -197,10 +197,13 @@ def list_all_files():
     all_files = list_files()
     for file in all_files:
         local_path = _get_local_filepath(file)
+        dt = datetime.fromtimestamp(file.created_at)
+        created = dt.strftime("%Y-%m-%d-%H:%M:%S")
+        file_description = f"{file.filename}\t\t({created} {file.purpose} {file.id})"
         if not os.path.exists(local_path):
-            click.echo(f"{file.filename} ({file.id}) does not exist locally")
+            click.echo(f"{file_description}) does not exist locally")
         else:
-            click.echo(f"{file.filename} ({file.id}) exists locally")
+            click.echo(f"{file_description}) exists locally")
 
 
 # def vision_url(prompt: str, image_url: str):
