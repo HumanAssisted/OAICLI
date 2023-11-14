@@ -12,6 +12,7 @@ from .oai import (
     wait_for_or_cancel_run,
     get_messages,
     upload_file,
+    save_local_message,
 )
 from .oai_wrappers import create_agent_interactive, list_agents
 from . import ASCII_ART, FilePathType, FilePathParamType
@@ -78,16 +79,21 @@ def start_up():
     click.echo("Ready.")
     click.echo(
         """
- - Change angent by typing "change agent"
- - Add file to
+Inline commands:
+ - Change agent by typing "change"
+ - Add file to agent with "agent"
  - Type 'exit' when done."""
     )
     while True:
         user_query = click.prompt(f"oaicli ({thread_name}) >")
         if user_query.strip() == "exit":
             exit("bye")
-        if user_query.strip() == "add":
-            exit("bye")
+        elif user_query.strip() == "change":
+            click.echo("changing agent")
+            continue
+        elif user_query.strip() == "agent":
+            click.echo("adding file to agent")
+            continue
 
         if click.confirm("Add a file?"):
             if click.confirm("Create a file?"):
@@ -116,6 +122,7 @@ def start_up():
         # when complete get thread/messages
         thread_messages = get_messages(current_thread_id)
         for content in thread_messages[0].content:
+            save_local_message(thread_message=thread_messages[0], role="assistant")
             click.echo(content.text.value)
 
 

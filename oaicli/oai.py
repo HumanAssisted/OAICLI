@@ -7,6 +7,7 @@ import time
 from typing import Optional, List
 from pathlib import Path
 import shutil
+from datetime import datetime
 
 JSON_RESPONSE_TYPE = {"type": "json_object"}
 TEXT_RESPONSE_TYPE = {"type": "text"}
@@ -72,24 +73,38 @@ def list_threads():
     return [thread.split(thread_separator) for thread in thread_dir]
 
 
+def _get_thread_directory(thread):
+    return f"{threads_dir}/{thread.metadata['name']}{thread_separator}{thread.id}"
+
+
 def create_thread(thread_name: str):
     metadata = {"name": thread_name}
     empty_thread = client.beta.threads.create(metadata=metadata)
     thread_id = empty_thread.id
     click.echo(f"created thread {thread_id}.")
-    os.makedirs(
-        f"{threads_dir}/{thread_name}{thread_separator}{thread_id}", exist_ok=True
-    )
+    os.makedirs(_get_thread_directory(empty_thread), exist_ok=True)
     return (thread_name, thread_id)
 
 
+def save_local_message(thread_message: str, role: str):
+    # TODO save content locally in thread directory
+    thread = client.beta.threads.retrieve(thread_message.id)
+    thread_directory = _get_thread_directory(thread)
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d-%H:%M:%S")
+    local_path = f"{thread_directory}/{timestamp}-{role}-{thread_message.id}.txt"
+    file_object = open(local_path, "w")
+    file_object.write(thread_message.content.text.value)
+
+
 def create_message(message_content: str, thread_name: str, thread_id: str):
+    role = "user"
     thread_message = client.beta.threads.messages.create(
         thread_id,
-        role="user",
+        role=role,
         content=message_content,
     )
-    # TODO save content locally in thread directory
+    save_local_message(thread_message, role=role)
     return thread_message
 
 
