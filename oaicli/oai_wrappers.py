@@ -187,7 +187,7 @@ def select_file_id():
         index_choice = click.prompt("Choose a file index", type=click.Choice(indexes))
 
         file_choice = choices[index_choice]
-        click.echo(f"You chose file {file_choice[0]}")
+        click.echo(f"You chose file {file_choice[0]} ({file_choice[1]})")
         return file_choice[1]
 
 

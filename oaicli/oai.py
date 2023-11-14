@@ -146,6 +146,14 @@ def _get_local_filepath(file):
     return f"{files_dir}/{new_filename}"
 
 
+def delete_file(file_id: str):
+    client.files.delete(file_id)
+
+
+def delete_assistant(assistant_id):
+    client.beta.assistants.delete(assistant_id)
+
+
 def upload_file(local_filepath: str):
     file = client.files.create(file=open(local_filepath, "rb"), purpose="assistants")
     file_path = Path(local_filepath)

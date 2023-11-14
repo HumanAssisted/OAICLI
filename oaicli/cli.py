@@ -5,15 +5,18 @@ from .oai import (
     download_all_files,
     list_all_files,
     upload_file,
+    delete_file,
 )
 from .oai_wrappers import (
     create_agent_interactive,
     list_assistants,
+    delete_assistant,
     select_assistant,
     select_thread,
     update_agent,
     choose_or_create_file,
     run_thread,
+    select_file_id,
 )
 from . import ASCII_ART, FilePathParamType
 
@@ -117,6 +120,14 @@ def do_upload_file(file_path):
         upload_file(file_path)
 
 
+@file.command(name="delete")
+def do_delete_file():
+    """delete file"""
+    file_id = select_file_id()
+    if click.confirm(f"Are you sure you want to delete file {file_id}?"):
+        delete_file(file_id)
+
+
 # @file.command(name="list_all")
 # def upload_directory():
 #     """List all files"""
@@ -148,6 +159,16 @@ def create_agent():
 def do_update_agent():
     """Update an agents instructions or file list"""
     update_agent()
+
+
+@agent.command(name="delete")
+def do_delete_agent():
+    """delete file"""
+    assistant = select_assistant()
+    if click.confirm(
+        f"Are you sure you want to delete assistant {assistant.name} ({assistant.id})?"
+    ):
+        delete_assistant(assistant.id)
 
 
 # @agent.command(name="delete")
