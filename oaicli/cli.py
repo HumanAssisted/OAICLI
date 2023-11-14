@@ -6,10 +6,12 @@ from .oai import (
     list_threads,
     create_thread,
     create_message,
+    download_all_files,
     create_run,
     wait_for_or_cancel_run,
     get_messages,
 )
+from .oai_wrappers import create_agent_interactive, list_agents
 from . import ASCII_ART, FilePathType
 
 
@@ -18,15 +20,6 @@ def cli():
     click.echo(ASCII_ART)
     """Main entry point for oaicli."""
     pass
-
-
-@click.group()
-def agent():
-    """Subcommand for managing agents."""
-    pass
-
-
-cli.add_command(agent)
 
 
 @cli.command(name="start")
@@ -41,37 +34,19 @@ def start_up():
     current_run = None
     current_run_id = None
 
-    click.echo("Listing assistants...")
-    assistant_count = 0
-    for assistant in get_assistants():
-        assistants.append(assistant)
-        click.echo(f"{assistant_count}. - {assistant.id} ({assistant.name})")
-        assistant_count += 1
-
-    if len(assistants) == 0:
-        click.echo("No assistants not found.")
-    else:
-        assistant_choice = int(click.prompt("Select Assistant"))
-        current_assistant = assistants[assistant_choice]
-        current_assistant_id = current_assistant.id
-
     if click.confirm("Create new assistant?"):
-        name = click.prompt("Name")
-        input_type = click.prompt("File or enter instructions manually?", default="m")
-        if input_type == "m":
-            instructions = click.prompt("Instructions")
-        else:
-            file_path = click.prompt("Please enter a file path", type=FilePathType())
-            click.echo(f"Loading filepath {file_path}")
-        exit()
-        new_assistant = create_assistant_wrapper(name=name, instructions=instructions)
-        click.echo(f"created {new_assistant.id} ({new_assistant.name})")
+        new_assistant = create_agent_interactive()
         assistants.append(new_assistant)
         current_assistant = new_assistant
         current_assistant_id = new_assistant.id
 
-    # get threads
-    # click.echo("Listing threads...")
+    assistants = list_agents()
+    if len(assistants) > 0:
+        assistant_choice = int(click.prompt("Select Assistant"))
+        current_assistant = assistants[assistant_choice]
+        current_assistant_id = current_assistant.id
+    else:
+        exit("must create assistant")
 
     threads = list_threads()
 
@@ -97,11 +72,25 @@ def start_up():
     # create thread (add name to metadata)
 
     # thread loop
-    click.echo("Ready. Type 'exit' when done.")
+    click.echo("Ready.")
+    click.echo(
+        """
+ - Change angent by typing "change agent"
+ - Add file to
+ - Type 'exit' when done."""
+    )
     while True:
         user_query = click.prompt(f"oaicli ({thread_name}) >")
-        if user_query == "exit":
+        if user_query.strip() == "exit":
             exit("bye")
+        if user_query.strip() == "add":
+            exit("bye")
+
+        if click.confirm("Add a file?"):
+            if click.confirm("Create a file?"):
+                pass
+            # list files
+            # choose a file
 
         # add message to thread
         thread_message = create_message(
@@ -126,19 +115,29 @@ def start_up():
         for content in thread_messages[0].content:
             click.echo(content.text.value)
 
-        # [ThreadMessage(
-        #     id='msg_n53ZT0m8pQZSbLhTPlBeNdJw',
-        #     assistant_id='asst_xz5Kmdsk1Hs8t2ZLUWGRwnF2',
-        #     content=[MessageContentText(text=Text(annotations=[],
-        #         value='Hello! How can I assist you today?'),
-        #         type='text')],
-        #     created_at=1699873243, file_ids=[], metadata={}, object='thread.message', role='assistant',
-        #     run_id='run_wediOA6p2gqQfFxsFnA2XvXZ', thread_id='thread_TkTvmaEJ3Pc0FcWS1Qo16QVD'),
-        # ThreadMessage(id='msg_1s4T6hIVBQPOmmOo4zGyoIpR', assistant_id=None,
-        #     content=[MessageContentText(text=Text(annotations=[], value='hello'), type='text')],
-        #     created_at=1699873242, file_ids=[], metadata={}, object='thread.message', role='user',
-        #     run_id=None, thread_id='thread_TkTvmaEJ3Pc0FcWS1Qo16QVD')
-        # ]
+
+@click.group()
+def file():
+    """Subcommand for managing file."""
+    pass
+
+
+cli.add_command(file)
+
+
+@file.command(name="download_all")
+def download_all():
+    """Download all files"""
+    download_all_files()
+
+
+@click.group()
+def agent():
+    """Subcommand for managing agents."""
+    pass
+
+
+cli.add_command(agent)
 
 
 @agent.command(name="list")
@@ -148,14 +147,9 @@ def list_agents():
 
 
 @agent.command(name="create")
-@click.argument("agent_name")
-def create_agent(agent_name):
+def create_agent():
     """Create a new agent."""
-    click.echo(f"Creating agent: {agent_name}")
-    input_type = click.prompt("File or enter instructions manually?", default="m")
-    if input_type == "m":
-        instructions = click.prompt("Instructions:", default=42.0)
-    # todo chose tools
+    create_agent_interactive()
 
 
 @agent.command(name="edit")

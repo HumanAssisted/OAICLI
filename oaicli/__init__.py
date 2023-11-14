@@ -28,20 +28,6 @@ OPEN_AI_MODEL_TYPE = os.getenv("OPEN_AI_MODEL_TYPE", DEFAULT_MODEL)
 OPEN_AI_VISION_MODEL_TYPE = os.getenv("OPEN_AI_VISION_MODEL_TYPE", DEFAULT_IMAGE_MODEL)
 
 
-def list_local_threads():
-    # maps names to thread ids
-    pass
-
-
-def get_local_agents():
-    # maps names to agents
-    pass
-
-
-def get_default():
-    pass
-
-
 # use with @click.argument('file_path', type=FilePathParamType())
 class FilePathParamType(click.Path):
     def shell_complete(self, ctx, param, incomplete):

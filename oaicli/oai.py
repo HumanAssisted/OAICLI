@@ -1,20 +1,28 @@
-from . import OPEN_AI_MODEL_TYPE, DEFAULT_IMAGE_MODEL, threads_dir
+from . import OPEN_AI_MODEL_TYPE, DEFAULT_IMAGE_MODEL, files_dir, threads_dir
 from openai import OpenAI
 import os
 import logging
 import click
 import time
 from typing import Optional, List
+from pathlib import Path
+import shutil
 
 JSON_RESPONSE_TYPE = {"type": "json_object"}
 TEXT_RESPONSE_TYPE = {"type": "text"}
 ALL_TOOLS_AVAILABLE = []
 MAX_AGENT_LIST = 100
 thread_separator = "---"
-
+agent_separator = "---"
+filename_separator = "---"
+DEFAULT_TOOLS = [{"type": "retrieval"}]
 logger = logging.getLogger("oaicli")
 
 client = OpenAI()
+
+
+def _get_assistant_path(my_assistant):
+    return f"{threads_dir}/{my_assistant.name}{thread_separator}{my_assistant.id}"
 
 
 def get_assistants(after=None):
@@ -27,8 +35,6 @@ def get_assistants(after=None):
         yield assistant
     if assistants.has_more:
         click.echo(f"There are more, but we stop at {MAX_AGENT_LIST}")
-        # for assistent in get_assistants(after=None):
-        #     yield assistent
 
 
 def create_assistant_wrapper(
@@ -37,11 +43,25 @@ def create_assistant_wrapper(
     my_assistant = client.beta.assistants.create(
         instructions=instructions,
         name=name,
-        # tools=tools,
+        tools=DEFAULT_TOOLS,
         model=OPEN_AI_MODEL_TYPE,
     )
 
+    os.makedirs(_get_assistant_path(my_assistant), exist_ok=True)
+
     return my_assistant
+
+
+def save_instructions(my_assistant, content):
+    filepath = f"{_get_assistant_path(my_assistant)}/instructions.txt"
+    file_object = open(filepath, "w")
+    file_object.write(content)
+
+
+def load_instructions(my_assistant):
+    filepath = f"{_get_assistant_path(my_assistant)}/instructions.txt"
+    file_object = open(filepath, "w")
+    return file_object.read()
 
 
 def list_threads():
@@ -53,7 +73,8 @@ def list_threads():
 
 
 def create_thread(thread_name: str):
-    empty_thread = client.beta.threads.create()
+    metadata = {"name": thread_name}
+    empty_thread = client.beta.threads.create(metadata=metadata)
     thread_id = empty_thread.id
     click.echo(f"created thread {thread_id}.")
     os.makedirs(
@@ -105,25 +126,59 @@ def wait_for_or_cancel_run(thread_id, run_id):
             return True
 
 
-def vision_url(prompt: str, image_url: str):
-    response = client.chat.completions.create(
-        model=DEFAULT_IMAGE_MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": image_url,
-                            "detail": "low",
-                        },
-                    },
-                ],
-            }
-        ],
-        max_tokens=300,
-    )
+def _get_local_filepath(file):
+    new_filename = f"{file.id}{filename_separator}{file.filename}"
+    return f"{files_dir}{new_filename}"
 
-    return response
+
+def upload_file(local_filepath: str):
+    file = client.files.create(file=open(local_filepath, "rb"), purpose="assistants")
+    file_path = Path(local_filepath)
+    filename = file_path.name
+
+    if filename != file.filename:
+        click.echo(f"warning {filename} != file.filename")
+
+    shutil.copyfile(local_filepath, _get_local_filepath(file))
+    return file
+
+
+def list_files():
+    return client.files.list()
+
+
+def download_all_files():
+    all_files = list_files()
+    for file in all_files:
+        local_path = _get_local_filepath(file)
+        if not os.path.exists(local_path):
+            content = client.files.retrieve_content(file.id)
+            file_object = open(local_path, "w")
+            file_object.write(content)
+            click.echo(f"wrote {file.name} to {local_path}")
+        else:
+            click.echo(f"file {file.name} exists locally")
+
+
+# def vision_url(prompt: str, image_url: str):
+#     response = client.chat.completions.create(
+#         model=DEFAULT_IMAGE_MODEL,
+#         messages=[
+#             {
+#                 "role": "user",
+#                 "content": [
+#                     {"type": "text", "text": prompt},
+#                     {
+#                         "type": "image_url",
+#                         "image_url": {
+#                             "url": image_url,
+#                             "detail": "low",
+#                         },
+#                     },
+#                 ],
+#             }
+#         ],
+#         max_tokens=300,
+#     )
+
+#     return response
