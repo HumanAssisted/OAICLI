@@ -108,12 +108,14 @@ def save_local_message(thread_message: str, role: str):
     file_object.write(all_content)
 
 
-def create_message(message_content: str, thread_name: str, thread_id: str):
+def create_message(
+    message_content: str, thread_name: str, thread_id: str, file_ids=None
+):
     role = "user"
+    if not file_ids:
+        file_ids = []
     thread_message = client.beta.threads.messages.create(
-        thread_id,
-        role=role,
-        content=message_content,
+        thread_id, role=role, content=message_content, file_ids=file_ids
     )
     save_local_message(thread_message, role=role)
     return thread_message
@@ -139,9 +141,7 @@ def wait_for_or_cancel_run(thread_id, run_id):
     while timeout_is_ok:
         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         if run.status != "completed":
-            click.echo(
-                f"Job is {run.status}. {total_time} s passed.", nl=False
-            )
+            click.echo(f"Job is {run.status}. {total_time} s passed.", nl=False)
             time.sleep(CHECK_INCREMENT)
             click.echo("\r", nl=False)
             total_time += CHECK_INCREMENT
