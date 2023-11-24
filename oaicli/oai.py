@@ -27,6 +27,7 @@ logger = logging.getLogger("oaicli")
 
 client = OpenAI()
 
+MAX_RUN_TIME = 120
 
 def _get_assistant_path(my_assistant):
     return f"{agents_dir}/{my_assistant.id}"
@@ -132,12 +133,12 @@ def get_messages(thread_id):
     return thread_messages.data
 
 
-def wait_for_or_cancel_run(thread_id, run_id):
+def wait_for_or_cancel_run(thread_id, run_id, max_run_time=MAX_RUN_TIME):
     timeout_is_ok = True
     total_time = 0
-    MAX_TIME = 46
+
     CHECK_INCREMENT = 2
-    click.echo(f"Running for a max of {MAX_TIME} seconds.")
+    click.echo(f"Running for a max of {max_run_time} seconds.")
     while timeout_is_ok:
         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         if run.status != "completed":
@@ -147,7 +148,7 @@ def wait_for_or_cancel_run(thread_id, run_id):
             total_time += CHECK_INCREMENT
             if run.status in ["cancelled", "failed", "expired"]:
                 return
-            if total_time >= MAX_TIME:
+            if total_time >= max_run_time:
                 run = client.beta.threads.runs.cancel(
                     thread_id="thread_abc123", run_id="run_abc123"
                 )

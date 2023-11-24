@@ -11,7 +11,6 @@ from .oai import (
     create_run,
     wait_for_or_cancel_run,
     get_messages,
-    _get_assistant_path,
     load_instructions,
     save_instructions,
     client,
