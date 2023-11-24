@@ -13,3 +13,7 @@
 - save messages
 - add files to messages or agents
 - edit agent messages or files
+
+# 0.2.1
+- bump openai client api version
+- bugfix with file ids
