@@ -19,6 +19,7 @@ from .oai_wrappers import (
     select_file_id,
 )
 from . import ASCII_ART, FilePathParamType
+from prompt_toolkit import prompt
 
 
 @click.group()
@@ -59,7 +60,8 @@ Inline commands:
  - Type 'exit' when done."""
     )
     while True:
-        user_query = click.prompt(f"oaicli ({current_thread_name}) >")
+        # user_query = click.prompt(f"oaicli ({current_thread_name}) >")
+        user_query = prompt(f"oaicli ({current_thread_name}) >")
         if user_query.strip() == "exit":
             exit("bye")
         elif user_query.strip() == "change":

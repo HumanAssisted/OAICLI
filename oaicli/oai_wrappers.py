@@ -11,14 +11,25 @@ from .oai import (
     create_run,
     wait_for_or_cancel_run,
     get_messages,
-    _get_assistant_path,
     load_instructions,
     save_instructions,
     client,
 )
-from . import FilePathType
+
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import PathCompleter
+from prompt_toolkit.formatted_text import HTML
+
+
 import textwrap
 from datetime import datetime
+
+
+session = PromptSession()
+
+
+def mutliline_toolbar():
+    return HTML("To save press ESC then enter.")
 
 
 def wrap_text(text, width=150, dash=False):
@@ -43,9 +54,17 @@ def create_agent_interactive():
         default="m",
     )
     if input_type == "m":
-        instructions = click.prompt("Instructions")
+        # instructions = click.prompt("Instructions")
+        instructions = session.prompt(
+            "Instructions",
+            multiline=True,
+            mouse_support=True,
+            bottom_toolbar=mutliline_toolbar,
+        )
     else:
-        file_path = click.prompt("Please enter a file path", type=FilePathType())
+        completer = PathCompleter()
+        file_path = session.prompt("Enter a file path: ", completer=completer)
+
         click.echo(f"Loading filepath {file_path}")
         with open(file_path, "r") as filehandle:
             instructions = filehandle.read()
@@ -78,7 +97,9 @@ def update_agent():
         if click.confirm(f"did you update {current_assistant.id}/instructions.txt?"):
             new_instructions = None
         else:
-            file_path = click.prompt("Please enter a file path", type=FilePathType())
+            completer = PathCompleter()
+            file_path = session.prompt("Enter a file path: ", completer=completer)
+
             click.echo(f"Loading filepath {file_path}")
             with open(file_path, "r") as filehandle:
                 new_instructions = filehandle.read()
@@ -114,9 +135,9 @@ def select_thread():
 
 def choose_or_create_file():
     if click.confirm("Create new file?"):
-        file_path = file_path = click.prompt(
-            "Please enter a file path", type=FilePathType()
-        )
+        completer = PathCompleter()
+        file_path = session.prompt("Enter a file path: ", completer=completer)
+
         if click.confirm(f"Are you sure you want to upload {file_path}?"):
             file = upload_file(file_path)
             file_id = file.id

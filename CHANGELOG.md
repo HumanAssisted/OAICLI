@@ -17,3 +17,9 @@
 # 0.2.1
 - bump openai client api version
 - bugfix with file ids
+
+# 0.2.2
+- increase timeout
+- bump openai client api version
+- prompt library for file autocomplete
+- prompt library for multipline input on agent names
