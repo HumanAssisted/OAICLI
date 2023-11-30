@@ -29,6 +29,7 @@ client = OpenAI()
 
 MAX_RUN_TIME = 120
 
+
 def _get_assistant_path(my_assistant):
     return f"{agents_dir}/{my_assistant.id}"
 

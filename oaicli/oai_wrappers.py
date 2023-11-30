@@ -18,6 +18,17 @@ from .oai import (
 from . import FilePathType
 import textwrap
 from datetime import datetime
+from prompt_toolkit import prompt
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import PathCompleter
+
+
+# html_completer = WordCompleter(['<html>', '<body>', '<head>', '<title>'])
+# text = prompt('Enter HTML: ', completer=html_completer, complete_while_typing=True)
+
+
+session = PromptSession()
 
 
 def wrap_text(text, width=150, dash=False):
@@ -44,7 +55,9 @@ def create_agent_interactive():
     if input_type == "m":
         instructions = click.prompt("Instructions")
     else:
-        file_path = click.prompt("Please enter a file path", type=FilePathType())
+        completer = PathCompleter()
+        file_path = session.prompt("Enter a file path: ", completer=completer)
+
         click.echo(f"Loading filepath {file_path}")
         with open(file_path, "r") as filehandle:
             instructions = filehandle.read()
@@ -77,7 +90,9 @@ def update_agent():
         if click.confirm(f"did you update {current_assistant.id}/instructions.txt?"):
             new_instructions = None
         else:
-            file_path = click.prompt("Please enter a file path", type=FilePathType())
+            completer = PathCompleter()
+            file_path = session.prompt("Enter a file path: ", completer=completer)
+
             click.echo(f"Loading filepath {file_path}")
             with open(file_path, "r") as filehandle:
                 new_instructions = filehandle.read()
@@ -113,9 +128,9 @@ def select_thread():
 
 def choose_or_create_file():
     if click.confirm("Create new file?"):
-        file_path = file_path = click.prompt(
-            "Please enter a file path", type=FilePathType()
-        )
+        completer = PathCompleter()
+        file_path = session.prompt("Enter a file path: ", completer=completer)
+
         if click.confirm(f"Are you sure you want to upload {file_path}?"):
             file = upload_file(file_path)
             file_id = file.id
