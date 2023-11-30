@@ -15,20 +15,21 @@ from .oai import (
     save_instructions,
     client,
 )
-from . import FilePathType
+
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import PathCompleter
+from prompt_toolkit.formatted_text import HTML
+
+
 import textwrap
 from datetime import datetime
-from prompt_toolkit import prompt
-from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit.completion import PathCompleter
-
-
-# html_completer = WordCompleter(['<html>', '<body>', '<head>', '<title>'])
-# text = prompt('Enter HTML: ', completer=html_completer, complete_while_typing=True)
 
 
 session = PromptSession()
+
+
+def mutliline_toolbar():
+    return HTML("To save press ESC then enter.")
 
 
 def wrap_text(text, width=150, dash=False):
@@ -53,7 +54,13 @@ def create_agent_interactive():
         default="m",
     )
     if input_type == "m":
-        instructions = click.prompt("Instructions")
+        # instructions = click.prompt("Instructions")
+        instructions = session.prompt(
+            "Instructions",
+            multiline=True,
+            mouse_support=True,
+            bottom_toolbar=mutliline_toolbar,
+        )
     else:
         completer = PathCompleter()
         file_path = session.prompt("Enter a file path: ", completer=completer)
