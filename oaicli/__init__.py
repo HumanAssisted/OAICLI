@@ -3,6 +3,9 @@ import appdirs
 from dotenv import load_dotenv
 from pathlib import Path
 import click
+import requests
+from mimetypes import guess_extension
+import re
 
 current_working_directory = Path.cwd()
 env_path = os.path.join(current_working_directory, ".env")
@@ -44,6 +47,72 @@ class FilePathType(click.Path):
         if not os.path.exists(value):
             self.fail(f"The file path '{value}' does not exist.", param, ctx)
         return super().convert(value, param, ctx)
+
+
+def is_url(string):
+    url_regex = re.compile(
+        r"^(?:http|ftp)s?://"  # http:// or https://
+        r"(?:\S+(?::\S*)?@)?"  # optional username:password@
+        r"(?:"  # domain...
+        r"(?P<private_ip>10(?:\.\d{1,3}){3})"  # ...including private & local networks
+        r"|"
+        r"(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}"
+        r"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-4])))"
+        r"|"
+        r"(?P<local_host>localhost)"  # localhost...
+        r"|"
+        r"(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+"  # ...or domain
+        r"(?:[a-zA-Z]{2,})"  # TLD
+        r")"
+        r"(?::\d{2,5})?"  # optional port
+        r"(?:/\S*)?"  # optional path
+        r"$"
+    )
+    return re.match(url_regex, string) is not None
+
+
+def download_file(url, directory, allowed_extensions=None):
+    if allowed_extensions is None:
+        # Default allowed extensions
+        allowed_extensions = [
+            ".doc",
+            ".txt",
+            ".md",
+            ".pdf",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+        ]
+
+    # Determine the file extension
+    response = requests.head(url)
+    content_type = response.headers.get("content-type")
+    ext = guess_extension(content_type)
+
+    # Check if the file extension is allowed
+    if ext not in allowed_extensions:
+        print(f"File extension '{ext}' not allowed.")
+        return
+
+    # Download the file
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Extract filename and ensure it's valid
+        filename = url.split("/")[-1]
+        if not filename:
+            print("Could not determine filename.")
+            return
+
+        file_path = os.path.join(directory, filename)
+
+        # Write the file to the specified directory
+        with open(file_path, "wb") as f:
+            f.write(response.content)
+        print(f"File downloaded successfully to {file_path}")
+    else:
+        print(f"Failed to download file. Status code: {response.status_code}")
+    return file_path, filename
 
 
 ASCII_ART = """

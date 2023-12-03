@@ -1,6 +1,6 @@
 [project]
 name = "oaicli"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Command Line Interface to Open AI"
 authors = [{name = "Jonathan Hendler", email = "jonathan@hai.io"}]
 license = {file="LICENSE"}

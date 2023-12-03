@@ -17,9 +17,11 @@ from .oai_wrappers import (
     choose_or_create_file,
     run_thread,
     select_file_id,
+    session,
 )
-from . import ASCII_ART, FilePathParamType
+from . import files_dir, ASCII_ART, FilePathParamType, download_file, is_url
 from prompt_toolkit import prompt
+from prompt_toolkit.completion import PathCompleter
 
 
 @click.group()
@@ -113,11 +115,22 @@ def list_all():
 
 @file.command(name="upload")
 @click.option(
-    "-f", "--file-path", type=FilePathParamType(), help="Path to a file.", required=True
+    "-f",
+    "--file-path",
+    type=FilePathParamType(),
+    help="Path to a file or a URL.",
+    required=False,
 )
 def do_upload_file(file_path):
     """Upload file"""
-    if click.confirm(f"Are you sure you want to upload {file_path}?"):
+    if not file_path:
+        completer = PathCompleter()
+        file_path = session.prompt("Enter a file path or url: ", completer=completer)
+
+    filepath_is_url = is_url(file_path)
+    if filepath_is_url:
+        file_path, filename = download_file(file_path, files_dir)
+    if click.confirm(f"Are you sure you want to upload {filename}?"):
         upload_file(file_path)
 
 

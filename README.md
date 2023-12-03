@@ -51,28 +51,17 @@ Threads are given names to make it easier to choose.
     oaicli file download-all
 
 
-
 ![Screenshot of running oaicli start](screenshot.png?raw=true "Running oaicli start")
 
-## experimental
-
-Probably broken. If you want autocompletion (useful for editing agents and uploading files)
-
-For Bash:
-
-    eval "$(_OAICLI_COMPLETE=source_bash oaicli)"
-
-For Zsh:
-
-    eval "$(_OAICLI_COMPLETE=source_zsh oaicli)"
 
 ## Roadmap
 
-### v0.3
+### v0.3-0.5
 
  - upload doc from url, or get web contents
  - cat a directory into a single file and upload
  - share publicically OAICLI help agent, uploading entire github repo. For example "what changes would you make to README.md based on the source code"
+ - pydantic refactor
 
  ### v1.x
 

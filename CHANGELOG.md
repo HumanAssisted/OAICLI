@@ -23,3 +23,6 @@
 - bump openai client api version
 - prompt library for file autocomplete
 - prompt library for multipline input on agent names
+
+# 0.2.3
+- upload a file that is from url

@@ -19,7 +19,7 @@ from .oai import (
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import PathCompleter
 from prompt_toolkit.formatted_text import HTML
-
+from . import is_url, files_dir, download_file
 
 import textwrap
 from datetime import datetime
@@ -98,7 +98,9 @@ def update_agent():
             new_instructions = None
         else:
             completer = PathCompleter()
-            file_path = session.prompt("Enter a file path: ", completer=completer)
+            file_path = session.prompt(
+                "Enter a file path or url: ", completer=completer
+            )
 
             click.echo(f"Loading filepath {file_path}")
             with open(file_path, "r") as filehandle:
@@ -137,7 +139,11 @@ def choose_or_create_file():
     if click.confirm("Create new file?"):
         completer = PathCompleter()
         file_path = session.prompt("Enter a file path: ", completer=completer)
-
+        filepath_is_url = is_url(file_path)
+        if filepath_is_url:
+            file_path, filename = download_file(file_path, files_dir)
+        if click.confirm(f"Are you sure you want to upload {filename}?"):
+            upload_file(file_path)
         if click.confirm(f"Are you sure you want to upload {file_path}?"):
             file = upload_file(file_path)
             file_id = file.id
