@@ -18,6 +18,7 @@ from .oai_wrappers import (
     run_thread,
     select_file_id,
     session,
+    mutliline_toolbar,
 )
 from . import files_dir, ASCII_ART, FilePathParamType, download_file, is_url
 from prompt_toolkit import prompt
@@ -63,7 +64,14 @@ Inline commands:
     )
     while True:
         # user_query = click.prompt(f"oaicli ({current_thread_name}) >")
-        user_query = prompt(f"oaicli ({current_thread_name}) >")
+        # user_query = prompt(f"oaicli ({current_thread_name}) >")
+        user_query = session.prompt(
+            f"oaicli ({current_thread_name}) >",
+            multiline=True,
+            mouse_support=True,
+            bottom_toolbar=mutliline_toolbar,
+        )
+
         if user_query.strip() == "exit":
             exit("bye")
         elif user_query.strip() == "change":

@@ -62,6 +62,7 @@ Threads are given names to make it easier to choose.
  - cat a directory into a single file and upload
  - share publicically OAICLI help agent, uploading entire github repo. For example "what changes would you make to README.md based on the source code"
  - pydantic refactor
+ - stream response to console
 
  ### v1.x
 

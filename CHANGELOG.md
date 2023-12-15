@@ -26,3 +26,5 @@
 
 # 0.2.3
 - upload a file that is from url
+- multi line entry for chat
+- upgrade openai client, log probs

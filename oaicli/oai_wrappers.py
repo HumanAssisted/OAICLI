@@ -56,7 +56,7 @@ def create_agent_interactive():
     if input_type == "m":
         # instructions = click.prompt("Instructions")
         instructions = session.prompt(
-            "Instructions",
+            "Instructions: ",
             multiline=True,
             mouse_support=True,
             bottom_toolbar=mutliline_toolbar,
