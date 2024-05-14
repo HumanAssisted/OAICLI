@@ -110,6 +110,8 @@ def save_local_message(thread_message: str, role: str):
     file_object.write(all_content)
 
 
+# todo add back fileids
+# https://platform.openai.com/docs/api-reference/messages/createMessage
 def create_message(
     message_content: str, thread_name: str, thread_id: str, file_ids=None
 ):
@@ -117,7 +119,7 @@ def create_message(
     if not file_ids:
         file_ids = []
     thread_message = client.beta.threads.messages.create(
-        thread_id, role=role, content=message_content, file_ids=file_ids
+        thread_id, role=role, content=message_content
     )
     save_local_message(thread_message, role=role)
     return thread_message

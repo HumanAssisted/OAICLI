@@ -1,7 +1,23 @@
-# 0.1.0
+# 0.3.0
 
-- basic create agent, thread, messages
+- update openai client lib
+- fix file /attachment upload
+- make it easy to attach directories or individual files.
 
+# 0.2.3
+- upload a file that is from url
+- multi line entry for chat
+- upgrade openai client, log probs
+
+# 0.2.2
+- increase timeout
+- bump openai client api version
+- prompt library for file autocomplete
+- prompt library for multipline input on agent names
+
+# 0.2.1
+- bump openai client api version
+- bugfix with file ids
 
 # 0.2.0
 
@@ -14,17 +30,12 @@
 - add files to messages or agents
 - edit agent messages or files
 
-# 0.2.1
-- bump openai client api version
-- bugfix with file ids
 
-# 0.2.2
-- increase timeout
-- bump openai client api version
-- prompt library for file autocomplete
-- prompt library for multipline input on agent names
 
-# 0.2.3
-- upload a file that is from url
-- multi line entry for chat
-- upgrade openai client, log probs
+
+
+
+
+# 0.1.0
+
+- basic create agent, thread, messages
