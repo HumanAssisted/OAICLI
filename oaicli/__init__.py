@@ -6,6 +6,7 @@ import click
 import requests
 from mimetypes import guess_extension
 import re
+import shutil
 
 current_working_directory = Path.cwd()
 env_path = os.path.join(current_working_directory, ".env")
@@ -18,8 +19,8 @@ agents_dir = os.path.join(home_dir, "agents")
 os.makedirs(agents_dir, exist_ok=True)
 threads_dir = os.path.join(home_dir, "threads")
 os.makedirs(threads_dir, exist_ok=True)
-files_dir = os.path.join(home_dir, "files")
-os.makedirs(files_dir, exist_ok=True)
+FILES_DIR = os.path.join(home_dir, "files")
+os.makedirs(FILES_DIR, exist_ok=True)
 
 
 DEFAULT_MODEL = "gpt-4-1106-preview"
@@ -29,6 +30,16 @@ DEFAULT_IMAGE_MODEL = "gpt-4-1106-vision-preview"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPEN_AI_MODEL_TYPE = os.getenv("OPEN_AI_MODEL_TYPE", DEFAULT_MODEL)
 OPEN_AI_VISION_MODEL_TYPE = os.getenv("OPEN_AI_VISION_MODEL_TYPE", DEFAULT_IMAGE_MODEL)
+DEFAULT_ALLOWED_EXTENSIONS =  [
+            ".doc",
+            ".txt",
+            ".md",
+            ".pdf",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+        ]
 
 
 # use with @click.argument('file_path', type=FilePathParamType())
@@ -71,19 +82,42 @@ def is_url(string):
     return re.match(url_regex, string) is not None
 
 
-def download_file(url, directory, allowed_extensions=None):
-    if allowed_extensions is None:
-        # Default allowed extensions
-        allowed_extensions = [
-            ".doc",
-            ".txt",
-            ".md",
-            ".pdf",
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".gif",
-        ]
+def copy_file(filepath, allowed_extensions=DEFAULT_ALLOWED_EXTENSIONS):
+    """
+    Given a local filesystem filepath, copy, get the filename, and filename
+    extension and copy the contents to FILES_DIR
+    """
+    # Check that the file exists
+    filepath = filepath.strip()
+    if not os.path.isfile(filepath):
+        print(f"File '{filepath}' does not exist.")
+        return
+
+    # Determine the filename from the path
+    filename = os.path.basename(filepath)
+
+    # Determine the file extension
+    _, ext = os.path.splitext(filename)
+
+    # Check if the file extension is allowed
+    if ext.lower() not in allowed_extensions:
+        print(f"File extension '{ext}' not allowed.")
+        return
+
+    # Define the destination path
+    file_path = os.path.join(FILES_DIR, filename)
+
+    # Copy the file contents to the destination
+    try:
+        shutil.copy(filepath, file_path)
+        print(f"File copied to {file_path}")
+    except Exception as e:
+        print(f"Failed to copy file: {e}")
+        return
+
+    return file_path, filename
+
+def download_file(url, allowed_extensions=DEFAULT_ALLOWED_EXTENSIONS):
 
     # Determine the file extension
     response = requests.head(url)
@@ -104,7 +138,7 @@ def download_file(url, directory, allowed_extensions=None):
             print("Could not determine filename.")
             return
 
-        file_path = os.path.join(directory, filename)
+        file_path = os.path.join(FILES_DIR, filename)
 
         # Write the file to the specified directory
         with open(file_path, "wb") as f:

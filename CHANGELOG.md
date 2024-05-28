@@ -2,6 +2,7 @@
 
 - update openai client lib
 - fix file /attachment upload
+- added version command
 
 # 0.2.3
 - upload a file that is from url

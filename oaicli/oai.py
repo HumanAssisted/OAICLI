@@ -2,7 +2,7 @@ from . import (
     OPEN_AI_MODEL_TYPE,
     DEFAULT_IMAGE_MODEL,
     agents_dir,
-    files_dir,
+    FILES_DIR,
     threads_dir,
 )
 from openai import OpenAI
@@ -161,7 +161,7 @@ def wait_for_or_cancel_run(thread_id, run_id, max_run_time=MAX_RUN_TIME):
 
 def _get_local_filepath(file):
     new_filename = f"{file.id}{filename_separator}{file.filename}"
-    return f"{files_dir}/{new_filename}"
+    return f"{FILES_DIR}/{new_filename}"
 
 
 def delete_file(file_id: str):

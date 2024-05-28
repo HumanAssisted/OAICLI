@@ -20,7 +20,7 @@ from .oai_wrappers import (
     session,
     mutliline_toolbar,
 )
-from . import files_dir, ASCII_ART, FilePathParamType, download_file, is_url
+from . import FILES_DIR, ASCII_ART, FilePathParamType, download_file, is_url
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import PathCompleter
 
@@ -30,6 +30,11 @@ def cli():
     """Main entry point for oaicli."""
     pass
 
+
+@cli.command(name="version")
+def print_version():
+    import importlib.metadata
+    print(importlib.metadata.version("oaicli"))
 
 @cli.command(name="start")
 def start_up():
@@ -137,7 +142,7 @@ def do_upload_file(file_path):
 
     filepath_is_url = is_url(file_path)
     if filepath_is_url:
-        file_path, filename = download_file(file_path, files_dir)
+        file_path, filename = download_file(file_path, FILES_DIR)
     if click.confirm(f"Are you sure you want to upload {filename}?"):
         upload_file(file_path)
 
