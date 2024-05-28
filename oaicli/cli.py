@@ -34,7 +34,9 @@ def cli():
 @cli.command(name="version")
 def print_version():
     import importlib.metadata
+
     print(importlib.metadata.version("oaicli"))
+
 
 @cli.command(name="start")
 def start_up():

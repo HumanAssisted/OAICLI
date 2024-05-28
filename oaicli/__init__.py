@@ -30,16 +30,16 @@ DEFAULT_IMAGE_MODEL = "gpt-4-1106-vision-preview"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPEN_AI_MODEL_TYPE = os.getenv("OPEN_AI_MODEL_TYPE", DEFAULT_MODEL)
 OPEN_AI_VISION_MODEL_TYPE = os.getenv("OPEN_AI_VISION_MODEL_TYPE", DEFAULT_IMAGE_MODEL)
-DEFAULT_ALLOWED_EXTENSIONS =  [
-            ".doc",
-            ".txt",
-            ".md",
-            ".pdf",
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".gif",
-        ]
+DEFAULT_ALLOWED_EXTENSIONS = [
+    ".doc",
+    ".txt",
+    ".md",
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+]
 
 
 # use with @click.argument('file_path', type=FilePathParamType())
@@ -117,8 +117,8 @@ def copy_file(filepath, allowed_extensions=DEFAULT_ALLOWED_EXTENSIONS):
 
     return file_path, filename
 
-def download_file(url, allowed_extensions=DEFAULT_ALLOWED_EXTENSIONS):
 
+def download_file(url, allowed_extensions=DEFAULT_ALLOWED_EXTENSIONS):
     # Determine the file extension
     response = requests.head(url)
     content_type = response.headers.get("content-type")
