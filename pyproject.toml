@@ -1,11 +1,11 @@
 [project]
 name = "oaicli"
-version = "0.2.3"
+version = "0.2.4"
 description = "A Command Line Interface to Open AI"
 authors = [{name = "Jonathan Hendler", email = "jonathan@hai.io"}]
 license = {file="LICENSE"}
 readme = "README.md"
-# repository = "https://github.com/HumanAssistedIntelligence/OAICLI"
+# repository = "https://github.com/HumanAssisted/OAICLI"
 keywords = ["cli", "openai", "api"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -15,10 +15,10 @@ classifiers = [
 
 dependencies = [
     "click>=8.1.7",
-    "openai>=1.4.0",
+    "openai>=1.29.0",
     "python-dotenv>=1.0.0",
     "appdirs>=1.4.4",
-    "prompt-toolkit>=3.0.40"
+    "prompt-toolkit>=3.0.40",
 ]
 
 [project.optional-dependencies]

@@ -19,7 +19,7 @@ from .oai import (
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import PathCompleter
 from prompt_toolkit.formatted_text import HTML
-from . import is_url, files_dir, download_file
+from . import is_url, download_file, copy_file
 
 import textwrap
 from datetime import datetime
@@ -141,7 +141,9 @@ def choose_or_create_file():
         file_path = session.prompt("Enter a file path: ", completer=completer)
         filepath_is_url = is_url(file_path)
         if filepath_is_url:
-            file_path, filename = download_file(file_path, files_dir)
+            file_path, filename = download_file(file_path)
+        else:
+            file_path, filename = copy_file(file_path)
         if click.confirm(f"Are you sure you want to upload {filename}?"):
             upload_file(file_path)
         if click.confirm(f"Are you sure you want to upload {file_path}?"):
