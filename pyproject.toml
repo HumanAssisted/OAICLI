@@ -1,6 +1,6 @@
 [project]
 name = "oaicli"
-version = "0.3.0"
+version = "0.2.4"
 description = "A Command Line Interface to Open AI"
 authors = [{name = "Jonathan Hendler", email = "jonathan@hai.io"}]
 license = {file="LICENSE"}
@@ -18,7 +18,7 @@ dependencies = [
     "openai>=1.29.0",
     "python-dotenv>=1.0.0",
     "appdirs>=1.4.4",
-    "prompt-toolkit>=3.0.40"
+    "prompt-toolkit>=3.0.40",
 ]
 
 [project.optional-dependencies]

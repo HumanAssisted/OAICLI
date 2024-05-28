@@ -1,8 +1,7 @@
-# 0.3.0
+# 0.2.4
 
 - update openai client lib
 - fix file /attachment upload
-- make it easy to attach directories or individual files.
 
 # 0.2.3
 - upload a file that is from url
